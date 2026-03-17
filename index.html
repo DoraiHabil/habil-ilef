@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <title>Habil ❤️ Ilef | عالمنا الخاص</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --secondary-color: #fff0f3;
+            --text-color: #4a4e69;
+            --gold: #d4af37;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Tajawal', sans-serif; background-color: var(--secondary-color); color: var(--text-color); overflow-x: hidden; }
+
+        /* شاشة القفل (الحماية) */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--secondary-color), #ffffff);
+            z-index: 10000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+        }
+        .lock-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid var(--primary-color); }
+        .lock-box h2 { color: var(--primary-color); margin-bottom: 20px; }
+        #pass-input { padding: 12px; border-radius: 10px; border: 1px solid #ddd; width: 200px; text-align: center; font-size: 1.2rem; margin-bottom: 20px; }
+
+        /* محتوى الموقع (مخفي في البداية) */
+        #main-content { display: none; }
+
+        /* الهيدر */
+        header { 
+            height: 100vh; 
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=1350&q=80') center/cover;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; 
+        }
+        .hero-text h1 { font-family: 'Dancing Script', cursive; font-size: clamp(3rem, 10vw, 6rem); margin-bottom: 20px; }
+        
+        /* تأثيرات القلوب */
+        .heart-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .heart { position: absolute; color: var(--primary-color); animation: float linear infinite; }
+
+        /* عداد الوقت والأقسام */
+        .timer-container { background: white; padding: 30px; margin: -50px auto 50px; width: 90%; max-width: 800px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); position: relative; z-index: 10; text-align: center; }
+        .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .time-box { background: var(--primary-color); color: white; padding: 15px; border-radius: 10px; }
+        .time-box span { font-size: 1.5rem; font-weight: bold; display: block; }
+        section { padding: 60px 20px; text-align: center; max-width: 1000px; margin: 0 auto; position: relative; z-index: 5; }
+        .section-title { color: var(--primary-color); font-size: 2.2rem; margin-bottom: 30px; }
+
+        /* معرض الصور */
+        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .gallery img { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; border: 5px solid white; transition: 0.3s; }
+        .gallery img:hover { transform: scale(1.03); }
+
+        /* الألعاب */
+        .quiz-btn { background: white; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 10px 20px; margin: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .quiz-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        .quiz-btn:hover { background: var(--primary-color); color: white; }
+        .game-heart { font-size: 4rem; cursor: pointer; display: inline-block; margin: 0 15px; animation: pulse 1.5s infinite; }
+
+        /* صندوق الرسائل */
+        #message-input { width: 100%; height: 100px; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ddd; }
+        .permanent-msg { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; text-align: right; border-right: 4px solid var(--primary-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        @keyframes float { 0% { transform: translateY(100vh) rotate(0); opacity: 1; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        /* تصميم قسم الرسائل المقتطفة */
+    .old-messages-section {
+        padding: 80px 20px;
+        background: rgba(255, 255, 255, 0.4);
+    }
+    /* تصميم مطور للرسائل الطويلة */
+    .messages-slider {
+        display: flex;
+        overflow-x: auto;
+        gap: 30px;
+        padding: 40px 20px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) transparent;
+    }
+
+    .paper-message {
+        min-width: 350px; /* زيادة العرض */
+        max-width: 450px;
+        background: #fff;
+        padding: 40px 30px;
+        border-radius: 2px;
+        box-shadow: 5px 15px 30px rgba(0,0,0,0.1);
+        position: relative;
+        border-top: 3px solid var(--primary-color); /* تغيير شكل البرواز ليصبح علوي */
+        max-height: 500px; /* أقصى طول للورقة */
+        overflow-y: auto; /* تمرير داخلي إذا كانت الرسالة طويلة جداً */
+        transition: 0.4s;
+        background-image: radial-gradient(#d1d1d1 1px, transparent 1px); /* خلفية منقطة خفيفة كالورق */
+        background-size: 20px 20px;
+    }
+
+    .paper-message p {
+        font-size: 1.15rem;
+        line-height: 1.9;
+        color: #333;
+        font-family: 'Tajawal', sans-serif;
+        white-space: pre-line; /* للحفاظ على تنسيق الأسطر كما كتبتها هي */
+    }
+
+    .paper-message::-webkit-scrollbar {
+        width: 4px;
+    }
+    .paper-message::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 10px;
+    }
+ 
+    </style>
+</head>
+<body>
+
+    <div id="lock-screen">
+        <div class="lock-box">
+            <h2>أهلاً بكِ في عالمنا ❤️</h2>
+            <p style="margin-bottom: 15px;">أدخلي تاريخ ميلادكِ للدخول (يوم/شهر/سنة)</p>
+            <input type="text" id="pass-input" placeholder="DDMMYYYY">
+            <br>
+            <button class="quiz-btn" style="background: var(--primary-color); color: white;" onclick="checkAccess()">فتح الموقع ✨</button>
+            <p id="error-msg" style="color: red; margin-top: 10px; display: none;">التاريخ خاطئ، حاولي مرة أخرى يا حبيبتي.</p>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div class="heart-bg" id="heart-bg"></div>
+
+        <header>
+            <div class="hero-text">
+                <h1>Habil ❤️ Ilef</h1>
+                <p>قصة حب نكتبها معاً كل يوم</p>
+                <p>لأنكِ أجمل أقداري</p>
+            </div>
+        </header>
+
+        <div class="timer-container">
+            <h2 style="margin-bottom: 15px; color: var(--primary-color);">كل لحظة معكِ هي عيد:</h2>
+            <div class="timer-grid">
+                <div class="time-box"><span id="days">0</span>أيام</div>
+                <div class="time-box"><span id="hours">0</span>ساعات</div>
+                <div class="time-box"><span id="minutes">0</span>دقائق</div>
+                <div class="time-box"><span id="seconds">0</span>ثواني</div>
+            </div>
+        </div>
+
+        <section>
+            <h2 class="section-title">ذكرياتنا 📸</h2>
+            <div class="gallery">
+                <img src="gallery/image1.png" alt="1">
+                <img src="gallery/image2.png" alt="2">
+                <img src="gallery/image3.png" alt="3">
+                <img src="gallery/image3.png" alt="4">
+                <img src="gallery/image5.jpg" alt="5">
+                <img src="gallery/image6.webp" alt="6">
+                <img src="gallery/image7.png" alt="7">
+                <img src="gallery/image8.png" alt="8">
+                <img src="gallery/image9.png" alt="9">
+            </div>
+        </section>
+       <section class="old-messages-section">
+            <h2 class="section-title">رسائلكِ التي حفرت في قلبي ✉️</h2>
+            <div class="messages-slider">
+
+                <div class="paper-message">
+                    <span class="quote-icon" style="font-size: 3rem; opacity: 0.2; position: absolute; top: 10px; right: 10px;">❝</span>
+                    <p>
+                        لا أجد كلمات تستطيع أن تصف مشاعري وعواطفي في هذه اللحظة الفريدة.
+                        لم أشعر بمثل هذا من قبل - وللمرة الأولى أتمنى ألا يختفي هذا الشعور، وأن يبقى معي طوال حياتي.
+                        
+                        مع كل يوم يمرّ، أزداد يقينًا بأنك قدري الحقيقي. صحيح أنني لا أجيد التعبير عن هذا بالكلمات - فهذا ليس معتادًا بالنسبة لي - لكنني أعلم أنك تفهمني أحيانا أكثر مما أفهم نفسي، وتشعر بصدق مشاعري كما أشعر أنا بصدق مشاعرك تجاهي.
+                        
+                        ولهذا أريد أن أقول لك: أنت أفضل ما حدث لي في حياتي، وأجمل إنسان شاركني يومي - سواء كان مليئًا بالفرح أو الحزن.
+                        أريدك أن تعرف كم أنت مهم بالنسبة لي، وكم أحبك وأعجب بك.
+                    </p>
+                    <div style="margin-top:25px; text-align:left; font-weight:bold; color:var(--primary-color); border-top: 1px dashed #eee; padding-top: 10px;">
+                        إيلاف ❤️
+                    </div>
+                </div>
+
+                <div class="paper-message">
+                    <span class="quote-icon" style="font-size: 3rem; opacity: 0.2; position: absolute; top: 10px; right: 10px;">❝</span>
+                    <p>
+                        لا أجد كلمات تستطيع أن تصف مشاعري وعواطفي في هذه اللحظة الفريدة.
+                        لم أشعر بمثل هذا من قبل - وللمرة الأولى أتمنى ألا يختفي هذا الشعور، وأن يبقى معي طوال
+                        حياتي.
+                        مع كل يوم يمرّ، أزداد يقينًا بأنك قدري الحقيقي. صحيح أنني لا أجيد التعبير عن هذا بالكلمات -
+                        فهذا ليس معتادًا بالنسبة لي - لكنني أعلم أنك تفهمني أحيانا أكثر مما أفهم نفسي، وتشعر بصدق
+                        مشاعري كما أشعر أنا بصدق مشاعرك تجاهي.
+                        ولهذا أريد أن أقول لك: أنت أفضل ما حدث لي في حياتي، وأجمل إنسان شاركني يومي - سواء
+                        كان مليئًا بالفرح أو الحزن.
+                        أريدك أن تعرف كم أنت مهم بالنسبة لي، وكم أحبك وأعجب بك.
+                    </p>
+                    <div style="margin-top:25px; text-align:left; font-weight:bold; color:var(--primary-color); border-top: 1px dashed #eee; padding-top: 10px;">
+                        إيلاف ❤️
+                    </div>
+                </div>
+                <div class="paper-message">
+                    <span class="quote-icon" style="font-size: 3rem; opacity: 0.2; position: absolute; top: 10px; right: 10px;">❝</span>
+                    <p>
+                        أشكر الله على أنك موجود في حياتي. كنت أفكر كيف كنت أعيش من قبل بدونك، بدون وجودك.
+                        في السابق لم أشعر تجاهك بأي مشاعر، أما الآن فأنا أحبك - لأجلك أنت، ولأفكارك، ولروحك التي
+                        أصبحت بالنسبة لي اكتشافًا جميلًا ومذهلًا.
+                        تستحق قلبي، وأنك ستعرف كيف تحافظ عليه.
+                        الآن أنا أنتمنك على نفسي، وقلبي، وروحي، وكل ما في داخلي، وأنا أعلم أنك إنسان جدير بالثقة
+                        وسيحافظ على هذا الأمان. وأعدك أن أحمي قلبك في حضني وفي أعماق روحي.
+                        لأول مرة يتفق عقلي وقلبي - أنا أحبك. يصعب عليّ وصف كل هذا بالكلمات، لكنني أعلم أنك
+                        أريدك أن تعرف أنك قريب مني، رغم المسافة بيننا. أشعر بك. أريدك أن تعرف ... أنني أحبك،
+                        وسأبقى وفية لك ولحبنا. أعدك.
+                    </p>
+                    <div style="margin-top:25px; text-align:left; font-weight:bold; color:var(--primary-color); border-top: 1px dashed #eee; padding-top: 10px;">
+                        إيلاف ❤️
+                    </div>
+                </div>
+                <div class="paper-message">
+                    <span class="quote-icon" style="font-size: 3rem; opacity: 0.2; position: absolute; top: 10px; right: 10px;">❝</span>
+                    <p>
+                        عزيزي،
+                        أحبك بطريقة لا يمكن للكلمات أن تعبر عنها. الله يختبر صبرنا، وأنا أريدك أن تبقى صبورا كما كنت
+                        دائما. صحيح أننا بعيدون عن بعضنا، لكنني أشعر بمشاعرك دائمًا ... سواء كنت سعيدًا أو حزينًا-أنا
+                        معك دائما حتى آخر نفس في حياتي.
+                        أنا بجانبك في كل خطوة، في كل خير وشر.
+                        أغار عليك، نعم، لأنك بالنسبة لي شخص مهم جدّا-أنت لي وحدي. أريدك أن تكون لي فقط، لا
+                        لغيري. ورغم أنني أثق بك كثيرًا، إلا أن الغيرة التي تأتي من الحب لا يمكن الهرب منها.
+                        أريد أن أغيّر نفسي، لأنني أرتاح هكذا.
+                        أما المشاكل؟ لا تقلق ... كلها مجرد وقت، والوقت سيمر. والسعادة ستأتي بإذن الله.
+                        "فإن مع العسر يسرا."
+                        أنا هنا ... لأساندك، وأقف معك.
+                        ربما لا أقول هذه الكلمات دائمًا، لكن لا يمكنني إخفاء مشاعري. أحبك، وأريدك أن تتقبلني كما أنا. لا
+                    </p>
+                    <div style="margin-top:25px; text-align:left; font-weight:bold; color:var(--primary-color); border-top: 1px dashed #eee; padding-top: 10px;">
+                        إيلاف ❤️
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">اختبري حبنا 🎮</h2>
+            <div style="background: white; padding: 20px; border-radius: 20px;">
+                <p>ما هو لقبي المفضل لكِ؟</p>
+                <button class="quiz-btn" onclick="alert('خطأ 😜')">الجميلة</button>
+                <button class="quiz-btn" onclick="alert('خطأ 😜')">أميرتي</button>
+                <button class="quiz-btn" onclick="alert('صح! يا روحي 😍')">روحي </button>
+                <button class="quiz-btn" onclick="alert('صح! يا حياتي 😍')">حياتي</button>
+            </div>
+                <div class="quiz-box">
+                <p id="quiz-q" style="font-size: 1.2rem; margin-bottom: 15px;">ما هو التاريخ الذي بدأ فيه كل شيء؟</p>
+                <button class="quiz-btn" onclick="ans('wrong')">2025-10-09</button>
+                <button class="quiz-btn" onclick="ans('wrong')">2025-11-19</button>
+                <button class="quiz-btn" onclick="ans('correct')">2025-11-15</button>
+                <button class="quiz-btn" onclick="ans('wrong')">2025-11-22</button><p id="quiz-res" style="margin-top: 15px; font-weight: bold;"></p>
+                </div>
+            <div style="margin-top: 40px;">
+                <p>اختاري قلباً يا إيلاف:</p>
+                <div class="game-heart" onclick="document.getElementById('gr').innerText='فزتِ بضمة كبيرة! 🤗'">💖</div>
+                <div class="game-heart" onclick="document.getElementById('gr').innerText='فزتِ قبلة مفاجئة! 😘🎁'">💝</div>
+                <div class="game-heart" onclick="document.getElementById('gr').innerText='فزتِ بهدية سرية! 🎁'">💗</div>
+                <p id="gr" style="margin-top: 20px; color: var(--primary-color); font-weight: bold;"></p>
+            </div>
+        </section>
+
+        <section style="background: white; border-radius: 30px; margin-top: 20px;">
+            <h2 style="color: var(--primary-color);">اتركي لي رسالة هنا يا حبيبتي ✍️</h2>
+            <p style="margin-bottom: 20px;">هذا المكان لكِ، كل ما تكتبينه سيبقى محفوظاً هنا للأبد..</p>
+            <textarea id="message-input" placeholder="ماذا يوجد في قلبكِ الآن؟ اترکي لي رسالة جميلة لتفرحي بها قلبي الصغير ❤️"></textarea>
+            <button class="quiz-btn" style="background:var(--primary-color); color:white;" onclick="saveMsg()">حفظ للأبد ❤️</button>
+            <div id="display-msgs" style="margin-top: 20px;"></div>
+        </section>
+        <section style="background: var(--primary-color); color: white; border-radius: 20px; margin-bottom: 50px; padding: 50px;">
+            <h2>وعدي لكِ يا إيلاف..</h2>
+            <p style="font-size: 1.4rem; line-height: 1.8;">
+             <br> أعدكِ أن أكون لكِ الأمان والسكن للأبد.
+            </p>
+        </section>
+
+        <footer style="padding: 50px; text-align: center; opacity: 0.6;">Habil ❤️ Ilef | Together Forever</footer>
+    </div>
+
+    <script>
+        // نظام الحماية
+        function checkAccess() {
+            const code = document.getElementById('pass-input').value;
+            if(code === "20102009") {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // العداد
+        const start = new Date("2025-11-15T12:30:00").getTime(); // غير التاريخ لبدايتكما
+        setInterval(() => {
+            const now = new Date().getTime();
+            const d = now - start;
+            document.getElementById("days").innerText = Math.floor(d/(1000*60*60*24));
+            document.getElementById("hours").innerText = Math.floor((d%(1000*60*60*24))/(1000*60*60));
+            document.getElementById("minutes").innerText = Math.floor((d%(1000*60*60))/(1000*60));
+            document.getElementById("seconds").innerText = Math.floor((d%(1000*60))/1000);
+        }, 1000);
+        function ans(s) { 
+            const res = document.getElementById('quiz-res');
+            if(s === 'correct') { res.innerText = "إجابة صحيحة! أحبكِ جداً 😍"; res.style.color = "green"; }
+            else { res.innerText = "لا يا حبيبتي، حاولي مرة أخرى 😉"; res.style.color = "red"; }
+        }
+        function game(m) { document.getElementById('game-res').innerText = m; }
+
+
+        // القلوب
+        setInterval(() => {
+            const h = document.createElement('div'); h.className = 'heart'; h.innerHTML = '❤️';
+            h.style.left = Math.random()*100+'vw'; h.style.animationDuration = Math.random()*3+2+'s';
+            document.getElementById('heart-bg').appendChild(h);
+            setTimeout(() => h.remove(), 5000);
+        }, 300);
+
+        // حفظ الرسائل
+        function saveMsg() {
+            const txt = document.getElementById('message-input').value;
+            if(txt) {
+                let msgs = JSON.parse(localStorage.getItem('h_i_msgs')) || [];
+                msgs.push({t: txt, d: new Date().toLocaleDateString()});
+                localStorage.setItem('h_i_msgs', JSON.stringify(msgs));
+                showMsgs(); document.getElementById('message-input').value = '';
+            }
+        }
+        function showMsgs() {
+            const msgs = JSON.parse(localStorage.getItem('h_i_msgs')) || [];
+            document.getElementById('display-msgs').innerHTML = msgs.map(m => `
+                <div class="permanent-msg"><p>${m.t}</p><small>${m.d}</small></div>
+            `).reverse().join('');
+        }
+        window.onload = showMsgs;
+
+    </script>
+</body>
+</html>
